@@ -1,41 +1,52 @@
+enum TypesOfMedia {
+  VIDEO = 'video',
+  AUDIO = 'audio',
+}
 
-// Перечисление с названием TypesOfMedia, которое включает строчные типы video, audio
+enum FormatsOfMedia {
+  MP4 = '.mp4',
+  MOV = '.mov',
+  MKV = '.mkv',
+  FLC = '.flv',
+  WEBM = '.webM',
+}
 
-// Перечисление с названием FormatsOfMedia, которое включает строчные видео-форматы: .mp4, .mov, .mkv, .flv, .webM
-
-// Описание интерфейса, в котором:
-// name - строка
-// type - один из перечисления выше
-// format = один из перечисления выше
-// subtitles - необязательное поле типа строка
-// marks - необязательное поле неизвестного типа
+interface IData {
+  name: string
+  type: TypesOfMedia
+  format: FormatsOfMedia
+  subtitles?: string
+  marks?: unknown
+}
 
 function playMedia(
-	{ name, type, format, subtitles, marks }: интерфейс = {
-		name: "example",
-		type: один из типов,
-		format: один из форматов,
-	}
+  { name, type, format, subtitles, marks }: IData = {
+    name: 'example',
+    type: TypesOfMedia.VIDEO,
+    format: FormatsOfMedia.MP4,
+  }
 ): string {
-	let marksLog;
+  let marksLog: string
 
-    // Создать функционал, что если marks - это массив, то "сложить" все эелементы в одну строку и поместить в marksLog
-    // Если это строка, то просто поместить её в marksLog
-    // Если что-то другое - то marksLog = "Unsupported type of marks"
-    // Не допускайте any!
+  if (Array.isArray(marks)) {
+    marksLog = marks.join(' ')
+  } else if (typeof marks === 'string') {
+    marksLog = marks
+  } else {
+    marksLog = 'Unsupported type of marks'
+  }
 
-	console.log(`Media ${name}${format} is ${type}
+  console.log(`Media ${name}${format} is ${type}
     Marks: ${marksLog}
-    Subtitles: ${subtitles ?? "none"}`);
-    // помните что это за оператор ??
+    Subtitles: ${subtitles ?? 'none'}`)
 
-	return "Media started";
+  return 'Media started'
 }
 
 playMedia({
-	name: "WoW",
-	format: один из форматов,
-	type: один из типов,
-	subtitles: "hmhmhm hmhmhm doh",
-	marks: ["4:30", "5:40"],
-});
+  name: 'WoW',
+  type: TypesOfMedia.VIDEO,
+  format: FormatsOfMedia.MKV,
+  subtitles: 'hmhmhm hmhmhm doh',
+  marks: ['4:30', '5:40'],
+})
