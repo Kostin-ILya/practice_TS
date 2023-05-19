@@ -1,18 +1,24 @@
 // Создать Generic-интерфейс PlayerData, который подходил бы для создания таких объектов:
 
-const player1 = {
+interface IPlayerData<S, T> {
+  game: S
+  hours: T
+  server: string
+}
+
+const player1: IPlayerData<string, number> = {
   game: 'CS:GO',
   hours: 300,
   server: 'basic',
 }
 
-const player2 = {
+const player2: IPlayerData<number, string> = {
   game: 2048,
   hours: '300 h.',
   server: 'arcade',
 }
 
-const player3 = {
+const player3: IPlayerData<string, object> = {
   game: 'Chess',
   hours: {
     total: 500,
@@ -30,6 +36,17 @@ const player3 = {
 // С текущими данными в консоль должно попадать:
 // { squares: 3, circles: 2, triangles: 2, others: 1 }
 
+enum FigureNames {
+  RECT = 'rect',
+  TRIANGLE = 'triangle',
+  LINE = 'line',
+  CIRCLE = 'circle',
+}
+
+interface IFigure {
+  name: FigureNames
+}
+
 interface AmountOfFigures {
   squares: number
   circles: number
@@ -37,39 +54,66 @@ interface AmountOfFigures {
   others: number
 }
 
-function calculateAmountOfFigures(figure): AmountOfFigures {}
+function calculateAmountOfFigures<T extends IFigure>(
+  figures: T[]
+): AmountOfFigures {
+  const res = {
+    squares: 0,
+    circles: 0,
+    triangles: 0,
+    others: 0,
+  }
+
+  figures.forEach(({ name }) => {
+    switch (name) {
+      case FigureNames.RECT:
+        res.squares++
+        break
+      case FigureNames.CIRCLE:
+        res.circles++
+        break
+      case FigureNames.TRIANGLE:
+        res.triangles++
+        break
+      default:
+        res.others++
+    }
+  })
+
+  return res
+}
 
 const data = [
   {
-    name: 'rect',
+    name: FigureNames.RECT,
     data: { a: 5, b: 10 },
   },
   {
-    name: 'rect',
+    name: FigureNames.RECT,
     data: { a: 6, b: 11 },
   },
   {
-    name: 'triangle',
+    name: FigureNames.TRIANGLE,
     data: { a: 5, b: 10, c: 14 },
   },
   {
-    name: 'line',
+    name: FigureNames.LINE,
     data: { l: 15 },
   },
   {
-    name: 'circle',
+    name: FigureNames.CIRCLE,
     data: { r: 10 },
   },
   {
-    name: 'circle',
+    name: FigureNames.CIRCLE,
     data: { r: 5 },
   },
   {
-    name: 'rect',
+    name: FigureNames.RECT,
     data: { a: 15, b: 7 },
   },
   {
-    name: 'triangle',
+    name: FigureNames.TRIANGLE,
   },
 ]
 
