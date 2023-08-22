@@ -1,40 +1,70 @@
 enum TransferStatus {
-	Pending = "pending",
-	Rejected = "rejected",
-	Completed = "completed",
+  Pending = 'pending',
+  Rejected = 'rejected',
+  Completed = 'completed',
 }
 
 enum ErrorMessages {
-	NotFound = "Not found: 404",
-	NotEnoughSpace = "Not enough space: 507",
-	Forbidden = "Forbidden: 403",
+  NotFound = 'Not found: 404',
+  NotEnoughSpace = 'Not enough space: 507',
+  Forbidden = 'Forbidden: 403',
 }
 
 interface ITransfer {
-	path: string;
-	data: string[];
-	date?: Date;
-	start: (p: string, d: string[]) => string;
-	stop: (reason: string) => string;
+  path: string
+  data: string[]
+  status: TransferStatus
+  date?: Date
+  start: (p: string, d: string[]) => string
+  stop: (reason: string) => string
 }
 
-interface TransferError {
-	message: ErrorMessages;
+interface ITransferError {
+  message?: ErrorMessages
 }
 
 // Класс должен имплементировать ITransfer и TransferError
-class SingleFileTransfer {
+class SingleFileTransfer implements ITransfer, ITransferError {
+  path: string
+  data: string[]
+  message?: ErrorMessages
+  status: TransferStatus = TransferStatus.Pending
+  date: Date | undefined
 
-    // Место для реализаций
+  checkTransferStatus(): void {
+    console.log(this.status)
+  }
 
-    // Необходимо создать метод checkTransferStatus, проверяющий состояние передачи данных
-    // Можно вывести в консоль данные, можно вернуть строку
+  stop(reason: string): string {
+    this.status = TransferStatus.Rejected
 
-    // Необходимо создать метод, который будет останавливать передачу данных
-    // И возвращать строку с причиной и датой остановки (Дата в любом формате)
+    return `Reason: ${reason}, date: ${new Date()}`
+  }
 
-    // Необходимо создать метод, который будет возвращать строку, содержащую
-    // Статус передачи и любое сообщение об ошибке. На ваш выбор или отталкиваться от приходящего аргумента
-    // Метод может показаться странным, но может использоваться для тестов, например
+  start(path: string, data: string[]): string {
+    this.path = path
+    this.data = data
+    this.status = TransferStatus.Completed
 
+    return `Transfer status:${this.status}, path:${this.path}, data:${this.data}`
+  }
+
+  checkError(error: ErrorMessages): string {
+    this.status = TransferStatus.Rejected
+
+    return `Transfer status:${this.status} , error: ${error}`
+  }
+
+  // Необходимо создать метод checkTransferStatus, проверяющий состояние передачи данных
+  // Можно вывести в консоль данные, можно вернуть строку
+
+  // Необходимо создать метод, который будет останавливать передачу данных
+  // И возвращать строку с причиной и датой остановки (Дата в любом формате)
+
+  // Необходимо создать метод, который будет возвращать строку, содержащую
+  // Статус передачи и любое сообщение об ошибке. На ваш выбор или отталкиваться от приходящего аргумента
+  // Метод может показаться странным, но может использоваться для тестов, например
 }
+
+const transfer = new SingleFileTransfer()
+console.log(transfer.checkError(ErrorMessages.Forbidden))
